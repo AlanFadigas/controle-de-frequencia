@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Setting {
+  id               String  @id @default("global")
+  enableLunchBreak Boolean @default(false)
+  smtpHost         String?
+  smtpPort         Int?
+  smtpUser         String?
+  smtpPass         String?
+  smtpFrom         String?
+  smtpProxy        String?
+}
+
+model User {
+  id        String @id @default(uuid())
+  email     String @unique
+  password  String
+  role      String @default("user") // "user" ou "admin"
+  name      String?
+  matricula         String?
+  funcao            String?
+  setor             String?
+  ramal             String?
+  resetToken        String?
+  resetTokenExpires DateTime?
+  logs              Log[]
+}
+
+model Log {
+  id         String   @id @default(uuid())
+  name       String
+  role       String
+  funcao     String?
+  date       String
+  entryTime  String
+  lunchStart String?
+  lunchEnd   String?
+  exitTime   String?
+  justification String?
+  status     String   @default("pending") // "pending" ou "completed"
+  createdAt  DateTime @default(now())
+  
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
